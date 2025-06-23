@@ -100,11 +100,9 @@ window.addEventListener('resize', () => {
   canvas.height = height;
 });
 
-// Daha az damla: 30 adet
+// YAĞMUR DAMLALARI
 class Raindrop {
-  constructor() {
-    this.reset();
-  }
+  constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * width;
     this.y = Math.random() * -height;
@@ -126,15 +124,59 @@ class Raindrop {
   }
 }
 
+// ATEŞ PARÇACIKLARI
+class FireParticle {
+  constructor(centerX, centerY) {
+    this.centerX = centerX;
+    this.centerY = centerY;
+    this.angle = Math.random() * 2 * Math.PI;
+    this.radius = Math.max(40, 50 + Math.random() * 10);
+    this.size = 2 + Math.random() * 2;
+    this.speed = 0.02 + Math.random() * 0.02;
+    this.alpha = 1;
+  }
+  update() {
+    this.angle += this.speed;
+    this.alpha -= 0.01;
+  }
+  draw() {
+    const x = this.centerX + Math.cos(this.angle) * this.radius;
+    const y = this.centerY + Math.sin(this.angle) * this.radius;
+    ctx.fillStyle = `rgba(255,100,0,${this.alpha})`;
+    ctx.beginPath();
+    ctx.arc(x, y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 let raindrops = Array.from({ length: 30 }, () => new Raindrop());
+let fireParticles = [];
 let animReq;
 
 function animate() {
   ctx.clearRect(0, 0, width, height);
+
+  // YAĞMUR
   raindrops.forEach(r => {
     r.update();
     r.draw();
   });
+
+  // ATEŞ
+  const btnRect = playBtn.getBoundingClientRect();
+  const centerX = btnRect.left + btnRect.width / 2;
+  const centerY = btnRect.top + btnRect.height / 2;
+
+  for (let i = 0; i < 3; i++) {
+    fireParticles.push(new FireParticle(centerX, centerY));
+  }
+
+  fireParticles.forEach((p, i) => {
+    p.update();
+    p.draw();
+    if (p.alpha <= 0) fireParticles.splice(i, 1);
+  });
+
   animReq = requestAnimationFrame(animate);
 }
 animate();
@@ -146,15 +188,14 @@ const music = document.getElementById('bg-music');
 const musicControl = document.getElementById('music-control');
 
 playBtn.addEventListener('click', () => {
-  // Oyunu göster
   startScreen.style.display = 'none';
   gameFrame.style.display = 'block';
 
-  // Yağmur ve animasyonu durdur
+  // Tüm animasyonu durdur
   cancelAnimationFrame(animReq);
   ctx.clearRect(0, 0, width, height);
 
-  // Müzik durdur ve butonu gizle
+  // Müzik durdur ve kontrol gizle
   if (!music.paused) {
     music.pause();
     musicControl.textContent = 'MÜZİK OYNAT';
@@ -166,7 +207,7 @@ musicControl.addEventListener('click', () => {
   if (music.paused) {
     music.play().then(() => {
       musicControl.textContent = 'MÜZİK DURDUR';
-    }).catch(err => console.warn('Müzik çalınamadı:', err));
+    }).catch(err => console.warn('Müzik başlatılamadı:', err));
   } else {
     music.pause();
     musicControl.textContent = 'MÜZİK OYNAT';
