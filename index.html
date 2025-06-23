@@ -4,39 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="5erUS4gnK8jPbyyalGJYX_MhW_-3CRyS343ygihqevc" />
-  <meta name="description" content="Kunefecraft ile tarayıcıdan beleş Minecraft oyna! Bedava Minecraft yani Eaglercraft oynamak için tıkla!!!" />
+  <title>KÜNEFECRAFT | Minecraft Oyna | Eaglercraft Tarayıcı MC</title>
+  <meta name="description" content="Kunefecraft ile tarayıcıdan beleş Minecraft oyna! Bedava Minecraft yani Eaglercraft oyna!!!" />
   <meta name="keywords" content="kunefe, kunefecraft, craft, minecraft, eagler, eaglercraft, minecraft oyna, minecraft bedava, beleş minecraft, mc" />
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
   <style>
-    body {
+    body, html {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      background: #111;
-      color: #fff;
+      height: 100%;
+      width: 100%;
+      font-family: 'Luckiest Guy', cursive;
+      overflow: hidden;
+    }
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: 'Luckiest Guy', cursive;
+      background: url('https://3dduvarkagitlari.com/Content/images/2023/7/26/l/3dduvarkagitlari-31da547a.jpg') no-repeat center center;
+      background-size: cover;
     }
     h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
+      font-size: 4em;
+      color: #fff;
+      text-shadow: 3px 3px 5px #000;
+      margin: 0 0 20px 0;
     }
     button {
-      font-size: 1.5em;
-      padding: 10px 20px;
+      font-size: 1.8em;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       background: #ff9900;
       color: #000;
-      transition: background 0.3s;
-      font-family: 'Luckiest Guy', cursive;
+      position: relative;
+      overflow: visible;
     }
-    button:hover {
-      background: #ffaa33;
+    button::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255, 153, 0, 0.3);
+      transform: translate(-50%, -50%) scale(0);
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+      }
     }
     iframe {
       width: 100%;
@@ -47,17 +77,22 @@
   </style>
 </head>
 <body>
+  <audio id="bg-music" src="https://dl.sndup.net/tjwb/C418%20-%20Minecraft.mp3" autoplay loop></audio>
+
   <div id="start-screen">
     <h1>KÜNEFECRAFT</h1>
     <button onclick="startGame()">OYNA</button>
   </div>
+
   <iframe id="game-frame" src="eaglercraft.html"></iframe>
 
   <script>
     function startGame() {
       document.getElementById('start-screen').style.display = 'none';
-      const frame = document.getElementById('game-frame');
-      frame.style.display = 'block';
+      document.getElementById('game-frame').style.display = 'block';
+      const music = document.getElementById('bg-music');
+      music.pause();
+      music.currentTime = 0;
     }
   </script>
 </body>
