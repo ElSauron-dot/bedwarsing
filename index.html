@@ -2,41 +2,39 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="google-site-verification" content="5erUS4gnK8jPbyyalGJYX_MhW_-3CRyS343ygihqevc" />
-  <title>KÜNEFECRAFT | Minecraft Oyna | Eaglercraft Tarayıcı MC</title>
-  <meta name="description" content="Kunefecraft ile tarayıcıdan beleş Minecraft oyna! Bedava Minecraft yani Eaglercraft oyna!!!" />
+  <title>KUNEFECRAFT | Minecraft Oyna | Eaglercraft Tarayıcı MC</title>
+  <meta name="description" content="Kunefecraft ile tarayıcıdan beleş Minecraft oyna! Eaglercraft, kunefe, craft, mc ve daha fazlası şimdi ücretsiz!" />
   <meta name="keywords" content="kunefe, kunefecraft, craft, minecraft, eagler, eaglercraft, minecraft oyna, minecraft bedava, beleş minecraft, mc" />
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; width: 100%;
       font-family: 'Luckiest Guy', cursive;
       overflow: hidden;
+      background: url('https://3dduvarkagitlari.com/Content/images/2023/7/26/l/3dduvarkagitlari-31da547a.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
     }
     #start-screen {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top:0; left:0; right:0; bottom:0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: url('https://3dduvarkagitlari.com/Content/images/2023/7/26/l/3dduvarkagitlari-31da547a.jpg') no-repeat center center;
-      background-size: cover;
+      color: white;
+      text-shadow: 2px 2px 4px #000;
+      z-index: 10;
     }
     h1 {
       font-size: 4em;
-      color: #fff;
-      text-shadow: 3px 3px 5px #000;
-      margin: 0 0 20px 0;
+      margin-bottom: 20px;
     }
-    button {
+    #play-button {
+      position: relative;
       font-size: 1.8em;
       padding: 12px 24px;
       border: none;
@@ -44,56 +42,125 @@
       cursor: pointer;
       background: #ff9900;
       color: #000;
-      position: relative;
       overflow: visible;
+      z-index: 20;
     }
-    button::after {
-      content: "";
+    #play-button:focus {
+      outline: none;
+    }
+    canvas {
       position: absolute;
-      top: 50%; left: 50%;
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      background: rgba(255, 153, 0, 0.3);
-      transform: translate(-50%, -50%) scale(0);
-      animation: pulse 2s infinite;
-      z-index: -1;
-    }
-    @keyframes pulse {
-      0% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -50%) scale(2);
-        opacity: 0;
-      }
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 15;
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
       display: none;
+      position: relative;
+      z-index: 5;
     }
   </style>
 </head>
 <body>
-  <audio id="bg-music" src="https://dl.sndup.net/tjwb/C418%20-%20Minecraft.mp3" autoplay loop></audio>
-
   <div id="start-screen">
     <h1>KÜNEFECRAFT</h1>
-    <button onclick="startGame()">OYNA</button>
+    <button id="play-button">OYNA</button>
   </div>
-
+  <canvas id="particle-canvas"></canvas>
   <iframe id="game-frame" src="eaglercraft.html"></iframe>
 
+  <audio id="bg-music" src="assets/minecraft.mp3" loop></audio>
+
   <script>
-    function startGame() {
-      document.getElementById('start-screen').style.display = 'none';
-      document.getElementById('game-frame').style.display = 'block';
-      const music = document.getElementById('bg-music');
-      music.pause();
-      music.currentTime = 0;
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = Math.random() * 4 + 2;
+        this.color = `rgba(255, 153, 0, ${Math.random()})`;
+        this.speedX = (Math.random() - 0.5) * 3;
+        this.speedY = (Math.random() - 0.5) * 3;
+        this.life = 100;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life--;
+        this.radius *= 0.96;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        p.update();
+        p.draw();
+        if (p.life <= 0 || p.radius < 0.5) {
+          particles.splice(i, 1);
+        }
+      });
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function createParticlesAroundButton() {
+      const btn = document.getElementById('play-button');
+      const rect = btn.getBoundingClientRect();
+      for(let i = 0; i < 5; i++) {
+        const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width;
+        const y = rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height;
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    function startParticles() {
+      animationId = requestAnimationFrame(function loop() {
+        createParticlesAroundButton();
+        animate();
+        animationId = requestAnimationFrame(loop);
+      });
+    }
+    startParticles();
+
+    const music = document.getElementById('bg-music');
+    const playBtn = document.getElementById('play-button');
+    const startScreen = document.getElementById('start-screen');
+    const gameFrame = document.getElementById('game-frame');
+
+    window.addEventListener('load', () => {
+      music.play().catch(() => {
+        console.log('Otomatik müzik çalamadı, butona basınca başlayacak.');
+      });
+    });
+
+    playBtn.addEventListener('click', () => {
+      music.play();
+      startScreen.style.display = 'none';
+      gameFrame.style.display = 'block';
+      cancelAnimationFrame(animationId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
   </script>
 </body>
 </html>
