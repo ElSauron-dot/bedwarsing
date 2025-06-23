@@ -4,22 +4,61 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="5erUS4gnK8jPbyyalGJYX_MhW_-3CRyS343ygihqevc" />
-  <meta name="description" content="KunefeCraft ile tarayıcıdan Minecraft bedava oyna! Eaglercraft, beleş Minecraft, kunefe, craft, mc ve daha fazlası şimdi tek tıkla. Sunucu aç, arkadaşlarınla oyna." />
+  <meta name="description" content="Kunefecraft ile tarayıcıdan beleş Minecraft oyna! Eaglercraft, kunefe, craft, mc ve daha fazlası şimdi ücretsiz!" />
   <meta name="keywords" content="kunefe, kunefecraft, craft, minecraft, eagler, eaglercraft, minecraft oyna, minecraft bedava, beleş minecraft, mc" />
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
   <style>
-    body, html {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
+      height: 100vh;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Luckiest Guy', cursive;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    button {
+      font-size: 1.5em;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #ff9900;
+      color: #000;
+      transition: background 0.3s;
+      font-family: 'Luckiest Guy', cursive;
+    }
+    button:hover {
+      background: #ffaa33;
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <iframe src="eaglercraft.html"></iframe>
+  <div id="start-screen">
+    <h1>KÜNEFECRAFT</h1>
+    <button onclick="startGame()">OYNA</button>
+  </div>
+  <iframe id="game-frame" src="eaglercraft.html"></iframe>
+
+  <script>
+    function startGame() {
+      document.getElementById('start-screen').style.display = 'none';
+      const frame = document.getElementById('game-frame');
+      frame.style.display = 'block';
+    }
+  </script>
 </body>
 </html>
