@@ -100,7 +100,7 @@ window.addEventListener('resize', () => {
   canvas.height = height;
 });
 
-// Yağmur damlası
+// Daha az damla: 30 adet
 class Raindrop {
   constructor() {
     this.reset();
@@ -108,7 +108,7 @@ class Raindrop {
   reset() {
     this.x = Math.random() * width;
     this.y = Math.random() * -height;
-    this.speed = 4 + Math.random() * 4;
+    this.speed = 3 + Math.random() * 3;
     this.length = 10 + Math.random() * 10;
     this.opacity = 0.5 + Math.random() * 0.5;
   }
@@ -126,7 +126,7 @@ class Raindrop {
   }
 }
 
-let raindrops = Array.from({length: 100}, () => new Raindrop());
+let raindrops = Array.from({ length: 30 }, () => new Raindrop());
 let animReq;
 
 function animate() {
@@ -142,22 +142,31 @@ animate();
 const playBtn = document.getElementById('play-button');
 const startScreen = document.getElementById('start-screen');
 const gameFrame = document.getElementById('game-frame');
-
-playBtn.addEventListener('click', () => {
-  startScreen.style.display = 'none';
-  gameFrame.style.display = 'block';
-  cancelAnimationFrame(animReq);
-  ctx.clearRect(0, 0, width, height);
-});
-
 const music = document.getElementById('bg-music');
 const musicControl = document.getElementById('music-control');
+
+playBtn.addEventListener('click', () => {
+  // Oyunu göster
+  startScreen.style.display = 'none';
+  gameFrame.style.display = 'block';
+
+  // Yağmur ve animasyonu durdur
+  cancelAnimationFrame(animReq);
+  ctx.clearRect(0, 0, width, height);
+
+  // Müzik durdur ve butonu gizle
+  if (!music.paused) {
+    music.pause();
+    musicControl.textContent = 'MÜZİK OYNAT';
+  }
+  musicControl.style.display = 'none';
+});
 
 musicControl.addEventListener('click', () => {
   if (music.paused) {
     music.play().then(() => {
       musicControl.textContent = 'MÜZİK DURDUR';
-    }).catch(err => console.warn('Müzik başlatılamadı:', err));
+    }).catch(err => console.warn('Müzik çalınamadı:', err));
   } else {
     music.pause();
     musicControl.textContent = 'MÜZİK OYNAT';
