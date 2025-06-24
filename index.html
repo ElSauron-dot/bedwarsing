@@ -96,34 +96,33 @@
   <canvas id="fireCanvas"></canvas>
 
   <script>
-    // OYNA işlevi
-    document.getElementById("playButton").addEventListener("click", () => {
-      // Tüm ekranı temizle
-      document.body.innerHTML = '<iframe src="eaglercraft.html"></iframe>';
-    });
-
-    // Müzik kontrol
     const musicButton = document.getElementById("musicButton");
     const bgMusic = document.getElementById("bgMusic");
 
-    musicButton.addEventListener("click", function() {
+    musicButton.addEventListener("click", () => {
       if (bgMusic.paused) {
-        bgMusic.play().catch(err => {
-          console.log("Müzik başlatılamadı:", err);
+        bgMusic.play().then(() => {
+          musicButton.textContent = '⏸';
+        }).catch(err => {
+          console.error("Müzik başlatılamadı:", err);
+          alert("Tarayıcı müziği başlatmayı engelliyor ya da dosya bulunamadı!");
         });
-        musicButton.textContent = '⏸';
       } else {
         bgMusic.pause();
         musicButton.textContent = '▶';
       }
     });
 
-    // Yağmur ve ateş efektleri
+    document.getElementById("playButton").addEventListener("click", () => {
+      document.body.innerHTML = '<iframe src="eaglercraft.html"></iframe>';
+      bgMusic.pause(); // iframe açıldığında müzik de dursun
+    });
+
+    // Yağmur ve ateş aynı kalıyor
     const rainCanvas = document.getElementById("rainCanvas");
     const rctx = rainCanvas.getContext("2d");
     const fireCanvas = document.getElementById("fireCanvas");
     const fctx = fireCanvas.getContext("2d");
-
     let width = rainCanvas.width = fireCanvas.width = window.innerWidth;
     let height = rainCanvas.height = fireCanvas.height = window.innerHeight;
 
